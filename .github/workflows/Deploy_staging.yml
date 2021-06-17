@@ -1,0 +1,77 @@
+name: Instance in staging
+
+on:
+  push:
+    branches: [ staging ]
+  pull_request:
+    branches: [ staging ]
+
+jobs:
+  test_google_function:
+    name: Build and test google function
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        pip install -U pip
+        pip install -r function_requirements.txt
+        pip install pytest
+
+    - name: Run tests on google function
+      env:
+        BUCKET: "my-bucket"
+        REGION: "my-region"
+      run: |
+        cd infrascture\get_data_function
+        python -m pytest
+
+  validate_infrastruture:
+    name: Terraform validation
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: HashiCorp - Setup Terraform
+      uses: hashicorp/setup-terraform@v1.2.1
+
+    - name: Terraform validate
+      run: |
+        cd infrascture/data_lake
+        terraform init
+        terraform validate
+        cd ../data_processing
+        terraform init
+        terraform validate
+        cd ../
+        terraform init
+        terraform validate
+        cd ../data_warehouse
+        terraform init
+        terraform validate
+
+  tests:
+    name: Unit and integration tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install test dependencies
+      run: |
+        pip install pytest
+
+    - name: Run tests
+      run: |
+        python -m pytest

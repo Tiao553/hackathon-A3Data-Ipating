@@ -1,0 +1,98 @@
+name: Instance deploy on the Production
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test_google_function:
+    name: Build and test google function
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        pip install -U pip
+        pip install -r function_requirements.txt
+        pip install pytest
+
+    - name: Run tests on google function
+      env:
+        BUCKET: "my-bucket"
+        REGION: "my-region"
+      run: |
+        cd infrascture\get_data_function
+        python -m pytest
+
+  validate_infrastruture:
+    name: Terraform validation
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: HashiCorp - Setup Terraform
+      uses: hashicorp/setup-terraform@v1.2.1
+
+    - name: Terraform validate
+      run: |
+        cd infrascture/data_lake
+        terraform init
+        terraform validate
+        cd ../data_processing
+        terraform init
+        terraform validate
+        cd ../
+        terraform init
+        terraform validate
+        cd ../data_warehouse
+        terraform init
+        terraform validate
+
+  tests:
+    name: Unit and integration tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Install test dependencies
+      run: |
+        pip install pytest
+
+    - name: Run tests
+      run: |
+        python -m pytest
+
+
+  deploy:
+    name: HashiCorp - Setup Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: hashicorp/setup-terraform@v1.2.1
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{  }}
+        aws-secret-access-key: ${{  }}
+        aws-region: us-east-1
+
+    - name: Terraform Apply
+      run: |
+        cd infrastructure
+        terraform init
+        terraform validate
+        terraform plan
