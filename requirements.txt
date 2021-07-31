@@ -3,7 +3,8 @@ google-cloud-storage
 google-cloud-bigquery
 google-cloud-dataproc
 google-cloud-datacatalog
-pytest
-black
-pre-commit
-flake8
+wget==3.2
+pyspark==3.1.1
+apache-airflow-providers-google==2.1.0
+apache-airflow-providers-apache-spark==1.0.2
+apache-airflow-providers-apache-sqoop==1.0.1

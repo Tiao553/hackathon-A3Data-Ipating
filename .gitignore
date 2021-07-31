@@ -1,5 +1,5 @@
 *.swp
-package-lock.json
+service-acount.json
 __pycache__
 .pytest_cache
 .env

@@ -73,7 +73,7 @@ Como não temos acesso direto a cluster e servidores on premises vamos ter fazer
 
 Primeiro ponto, montamos a ideia de infra estrtura nos baseando em uma arquitetura lambda e nas ferramentas que conhecemos da AWS. Feito isso começamos a enteder quais ferramentas da google cloud nos atenderia de forma igual ou similar. Dessa maneira chegamos a seguite arquitetura:
 
-<center><img src='arquitetura.jpeg'></center>
+<center><img src='img/arquitetura.jpeg'></center>
 
 ## Topico 3: Continouos Monitoring
 
